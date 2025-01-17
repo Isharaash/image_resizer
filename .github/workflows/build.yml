@@ -13,14 +13,30 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'  # Set the desired Python version here
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
 
-    - name: Copy files to EC2
+    - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_PUBLIC_IP }} "cd /var/www/flaskapp && git pull origin main && source venv/bin/activate && pip install -r requirements.txt && sudo systemctl restart flaskapp"
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
+          cd /var/www/flaskapp || exit
+          git pull origin main || exit
+          source venv/bin/activate || exit
+          pip install -r requirements.txt || exit
+          sudo systemctl restart flaskapp || exit
+        EOF
 
     - name: Restart Nginx (if needed)
       run: |
