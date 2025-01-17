@@ -1,14 +1,37 @@
-body {
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
     font-family: Arial, sans-serif;
     text-align: center;
-    margin: 50px;
 }
-
-form {
-    display: inline-block;
-    text-align: left;
+header {
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
 }
-
-input, button {
-    margin: 5px 0;
+header img {
+    height: 50px;
+}
+.form-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f8f9fa;
+}
+.card {
+    width: 100%;
+    max-width: 800px;
+    padding: 80px;
+}
+footer {
+    border-top: 1px solid #ddd;
+}
+.rapid_image_resizer_logo{
+    height: 60px;
+}
+nav a {
+    font-weight: 600;
 }
