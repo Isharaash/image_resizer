@@ -10,18 +10,7 @@
 </head>
 <body>
     <!-- Header -->
-    <header>
-        <div class="container d-flex justify-content-between align-items-center">
-            <a href="/" class="text-dark text-decoration-none">
-                <img src="/static/assets/rapid image resizer.jpg" alt="rapid image resizer logo" class="rapid_image_resizer_logo">
-            </a>
-                <nav>
-                    <a href="/" class="text-dark text-decoration-none">Image Resizer</a>
-                    <span class="text-dark mx-2"> | </span>
-                    <a href="/rapid_resizer" class="text-dark text-decoration-none me-3">Rapid.lk Product Image Resizer</a>
-                </nav>
-        </div>
-    </header>
+    {% include '/global/header.html' %}
 
     <!-- Main Content -->
     <div class="form-container">
@@ -69,16 +58,7 @@
     
 
     <!-- Footer -->
-    <footer class="bg-light text-dark py-3">
-        <div class="container text-center">
-            <p>
-                Developed by 
-                <a href="https://www.codexlk.com" target="_blank" class="text-decoration-none text-primary fw-bold">
-                    CODEX
-                </a>
-            </p>
-        </div>
-    </footer>
+    {% include '/global/footer.html' %}
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
