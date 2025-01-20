@@ -1,45 +1,57 @@
-name: Deploy Flask App to AWS EC2
+name: Deploy Flask App
 
 on:
   push:
     branches:
-      - master  # Trigger deployment when changes are pushed to the "dev" branch
+      - master   # Trigger the pipeline on a push to the 'main' branch
+  workflow_dispatch:  # Allow manual triggers from the GitHub Actions interface
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Check out the repository
+    # Step 1: Checkout the repository
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    # Step 2: Set up Python environment
+    # Step 2: Set up Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.8  # Update to match your Python version
+        python-version: '3.9'  # Update to match the required Python version
 
-    # Step 3: Configure SSH to EC2
-    - name: Configure SSH
-      uses: webfactory/ssh-agent@v0.7.0
-      with:
-        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+    # Step 3: Install dependencies (optional)
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
     # Step 4: Deploy to EC2
     - name: Deploy to EC2
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        EC2_HOST: ${{ secrets.EC2_HOST }}
+        EC2_USER: ${{ secrets.EC2_USER }}
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_PUBLIC_IP }} << EOF
-          cd /var/www/flaskapp
+        # Define the deployment path on the EC2 server
+        DEPLOY_PATH="/var/www/flaskapp"
 
-          # Pull latest changes
-          git pull origin dev
+        # SSH into the EC2 instance and execute commands
+        ssh -o StrictHostKeyChecking=no -i "$SSH_PRIVATE_KEY" $EC2_USER@$EC2_HOST <<EOF
+          # Navigate to the deployment directory
+          cd $DEPLOY_PATH
 
-          # Activate virtual environment and install dependencies
+          # Pull the latest code
+          git pull origin main
+
+          # Activate virtual environment
           source venv/bin/activate
+
+          # Install or update dependencies
           pip install --upgrade pip
           pip install -r requirements.txt
 
-          # Restart the Flask application (using Gunicorn or systemd)
+          # Restart the Flask app using Gunicorn
           sudo systemctl restart flaskapp
         EOF
